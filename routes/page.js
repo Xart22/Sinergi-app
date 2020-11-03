@@ -1,90 +1,92 @@
-const { json } = require("express");
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql");
 const db_config = {
-  host: "45.130.230.43",
-  port :"3306",
-  user: "u1025839_data_sinergi",
-  password: "sinergi!@#",
-  database: "u1025839_sinergi",
-  dateStrings: 'date'
+  host: "",
+  port: "",
+  user: "",
+  password: "",
+  database: "",
+  dateStrings: "date",
 };
 function handleDisconnect() {
   db = mysql.createConnection(db_config); // Recreate the connection, since
   db.connect((error) => {
     if (error) {
-      console.log(error)
+      console.log(error);
     } else {
       console.log("SUKSES");
     }
   });
-  db.on('error', function(err) {
-    console.log('db error', err);
-    if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
-      handleDisconnect();                         // lost due to either server restart, or a
-    } else if(err.code === 'ECONNRESET') {                                      // connnection idle timeout (the wait_timeout
-        handleDisconnect();                              // server variable configures this)
-    }else{
-      throw err
+  db.on("error", function (err) {
+    console.log("db error", err);
+    if (err.code === "PROTOCOL_CONNECTION_LOST") {
+      // Connection to the MySQL server is usually
+      handleDisconnect(); // lost due to either server restart, or a
+    } else if (err.code === "ECONNRESET") {
+      // connnection idle timeout (the wait_timeout
+      handleDisconnect(); // server variable configures this)
+    } else {
+      throw err;
     }
   });
 }
 handleDisconnect();
 
-
 var datahold = [];
 var proses = [];
 var dataproses = [];
-var nm=[]
-var inv =[];
+var nm = [];
+var inv = [];
 var cetaklns;
 var cetakdp;
 // GET
-router.get("/tes",(req,res)=>{
-  res.render("tes.hbs")
-})
-router.get("/pembayaran",(req,res)=>{
-  db.query("SELECT * FROM inv_cetak_dp",(err,result)=>{
-    cetakdp = result
+router.get("/tes", (req, res) => {
+  res.render("tes.hbs");
+});
+router.get("/pembayaran", (req, res) => {
+  db.query("SELECT * FROM inv_cetak_dp", (err, result) => {
+    cetakdp = result;
     for (let i = 0; i < cetakdp.length; i++) {
       var tgl_cetak = cetakdp[i].tgl_cetak;
       var aw = new Date(tgl_cetak).toJSON().slice(0, 10).replace("T", " ");
       cetakdp[i].tgl_cetak = aw;
     }
-  })
-  db.query("SELECT * FROM inv_cetak_lunas",(err,result)=>{
-    cetaklns= result
+  });
+  db.query("SELECT * FROM inv_cetak_lunas", (err, result) => {
+    cetaklns = result;
     for (let i = 0; i < cetaklns.length; i++) {
       var tgl_cetak = cetaklns[i].tgl_cetak;
       var aw = new Date(tgl_cetak).toJSON().slice(0, 10).replace("T", " ");
       cetaklns[i].tgl_cetak = aw;
     }
-  })
-  res.render("pembayaran.hbs",{lns : cetaklns,dp :cetakdp,usr :req.session.username})
-  cetakdp="";
-  cetaklns="";
-})
+  });
+  res.render("pembayaran.hbs", {
+    lns: cetaklns,
+    dp: cetakdp,
+    usr: req.session.username,
+  });
+  cetakdp = "";
+  cetaklns = "";
+});
 
-
-router.get("/no_invoice",(req,res)=>{
-  db.query("SELECT * FROM inv ORDER BY id DESC LIMIT 1;",(err,result)=>{
-    res.json(result) 
-  })
-
-})
-router.get("/kodeska",(req,res)=>{
-  db.query("SELECT * FROM kode_ska",(err,results)=>{
-    if (err) throw err
-    res.json(results)
-  })
-})
-router.get("/kodesbu",(req,res)=>{
-  db.query("SELECT * FROM kode_sbu",(err,results)=>{
-    if (err) throw err
-    res.json(results)
-  })
-})
+router.get("/no_invoice", (req, res) => {
+  db.query("SELECT * FROM inv ORDER BY id DESC LIMIT 1;", (err, result) => {
+    res.json(result);
+  });
+});
+router.get("/kodeska", (req, res) => {
+  db.query("SELECT * FROM kode_ska", (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+});
+router.get("/kodesbu", (req, res) => {
+  db.query("SELECT * FROM kode_sbu", (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+});
 router.get("/", (req, res) => {
   if (req.session.loggedin) {
     res.redirect("home");
@@ -94,21 +96,29 @@ router.get("/", (req, res) => {
   datahold = [];
 });
 router.get("/cetakinvoice", (req, res) => {
-db.query("SELECT id, nm_client FROM tbl_client",(err,results)=>{
-  if(err)throw err
-  res.render("invoice.hbs",{tbl : results,hide : "show",use : req.session.username});
-})
+  db.query("SELECT id, nm_client FROM tbl_client", (err, results) => {
+    if (err) throw err;
+    res.render("invoice.hbs", {
+      tbl: results,
+      hide: "show",
+      use: req.session.username,
+    });
+  });
   datahold = [];
-  nm=[]
-  inv=[]
+  nm = [];
+  inv = [];
 });
 
 router.get("/inputska", (req, res) => {
   if (req.session.loggedin) {
-    db.query("SELECT * FROM tbl_client",(err,results)=>{
-      if (err)throw err
-      res.render("inputska.hbs", { usr: req.session.username,client :results, msg: "HAIII" });
-    })
+    db.query("SELECT * FROM tbl_client", (err, results) => {
+      if (err) throw err;
+      res.render("inputska.hbs", {
+        usr: req.session.username,
+        client: results,
+        msg: "HAIII",
+      });
+    });
   } else {
     res.render("login.hbs");
   }
@@ -116,10 +126,14 @@ router.get("/inputska", (req, res) => {
 });
 router.get("/inputsbu", (req, res) => {
   if (req.session.loggedin) {
-    db.query("SELECT * FROM tbl_client",(err,results)=>{
-      if (err)throw err
-      res.render("inputsbu.hbs", { usr: req.session.username,client :results, msg: "HAIII" });
-    })
+    db.query("SELECT * FROM tbl_client", (err, results) => {
+      if (err) throw err;
+      res.render("inputsbu.hbs", {
+        usr: req.session.username,
+        client: results,
+        msg: "HAIII",
+      });
+    });
   } else {
     res.render("login.hbs");
   }
@@ -127,10 +141,14 @@ router.get("/inputsbu", (req, res) => {
 });
 router.get("/inputiso", (req, res) => {
   if (req.session.loggedin) {
-    db.query("SELECT * FROM tbl_client",(err,results)=>{
-      if (err)throw err
-      res.render("inputiso.hbs", { usr: req.session.username,client :results, msg: "HAIII" });
-    })
+    db.query("SELECT * FROM tbl_client", (err, results) => {
+      if (err) throw err;
+      res.render("inputiso.hbs", {
+        usr: req.session.username,
+        client: results,
+        msg: "HAIII",
+      });
+    });
   } else {
     res.render("login.hbs");
   }
@@ -138,10 +156,14 @@ router.get("/inputiso", (req, res) => {
 });
 router.get("/inputk3", (req, res) => {
   if (req.session.loggedin) {
-    db.query("SELECT * FROM tbl_client",(err,results)=>{
-      if (err)throw err
-      res.render("inputk3.hbs", { usr: req.session.username,client :results, msg: "HAIII" });
-    })
+    db.query("SELECT * FROM tbl_client", (err, results) => {
+      if (err) throw err;
+      res.render("inputk3.hbs", {
+        usr: req.session.username,
+        client: results,
+        msg: "HAIII",
+      });
+    });
   } else {
     res.render("login.hbs");
   }
@@ -149,10 +171,14 @@ router.get("/inputk3", (req, res) => {
 });
 router.get("/inputakta", (req, res) => {
   if (req.session.loggedin) {
-    db.query("SELECT * FROM tbl_client",(err,results)=>{
-      if (err)throw err
-      res.render("inputakta.hbs", { usr: req.session.username,client :results, msg: "HAIII" });
-    })
+    db.query("SELECT * FROM tbl_client", (err, results) => {
+      if (err) throw err;
+      res.render("inputakta.hbs", {
+        usr: req.session.username,
+        client: results,
+        msg: "HAIII",
+      });
+    });
   } else {
     res.render("login.hbs");
   }
@@ -176,7 +202,6 @@ router.get("/dataholding", (req, res) => {
         var aw = new Date(tgl_masuk).toJSON().slice(0, 10).replace("T", " ");
         datahold[0][i].tgl_masuk = aw;
       }
-
     });
     db.query("SELECT * FROM data_hold_sbu", (err, results, fields) => {
       if (err) throw err;
@@ -340,7 +365,7 @@ router.get("/home", (req, res) => {
     });
     db.query("SELECT * FROM data_proses_akta", (err, results, fields) => {
       if (err) {
-        throw err
+        throw err;
       } else {
         dataproses.push(results);
         for (let i = 0; i < dataproses[4].length; i++) {
@@ -357,7 +382,7 @@ router.get("/home", (req, res) => {
           usr: req.session.username,
           msg: "HAIII",
         });
-        dataproses =[]
+        dataproses = [];
       }
     });
   } else {
@@ -412,9 +437,9 @@ router.post("/inputska", (req, res) => {
     al2,
     tlpc,
     harga,
-    desc
+    desc,
   } = req.body;
-  console.log(al1)
+  console.log(al1);
   db.query(
     "INSERT INTO data_hold_ska (nama,nik,npwp,service,klasifikasi,kode,keterangan,pjd,harga,nm_client,tgl_masuk) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
     [
@@ -423,7 +448,7 @@ router.post("/inputska", (req, res) => {
       npwp,
       service,
       klasifikasi,
-      kode+" "+desc,
+      kode + " " + desc,
       keterangan,
       pjd,
       harga,
@@ -432,17 +457,36 @@ router.post("/inputska", (req, res) => {
     ],
     (err, results) => {
       if (err) throw err;
-      if (al1 == undefined){ 
-        db.query("INSERT INTO invoice_ska (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,klasifikasi,klasifikasi+" "+kode+" "+desc+" a.n "+nama,harga]),
-        res.render("inputska.hbs", { msg: "SUKSES INPUT DATA" });  
-      }else{
-        db.query("INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",[nc,al1,al2,tlpc],(err,results)=>{
-          if (err) throw err
-          db.query("INSERT INTO invoice_ska (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,klasifikasi,klasifikasi+" "+kode+" "+desc+" a.n "+nama,harga]),
-          res.render("inputska.hbs", { msg: "SUKSES INPUT DATA" });  
-        })
+      if (al1 == undefined) {
+        db.query(
+          "INSERT INTO invoice_ska (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+          [
+            nc,
+            klasifikasi,
+            klasifikasi + " " + kode + " " + desc + " a.n " + nama,
+            harga,
+          ]
+        ),
+          res.render("inputska.hbs", { msg: "SUKSES INPUT DATA" });
+      } else {
+        db.query(
+          "INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",
+          [nc, al1, al2, tlpc],
+          (err, results) => {
+            if (err) throw err;
+            db.query(
+              "INSERT INTO invoice_ska (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+              [
+                nc,
+                klasifikasi,
+                klasifikasi + " " + kode + " " + desc + " a.n " + nama,
+                harga,
+              ]
+            ),
+              res.render("inputska.hbs", { msg: "SUKSES INPUT DATA" });
+          }
+        );
       }
-    
     }
   );
 });
@@ -464,7 +508,6 @@ router.post("/inputsbu", (req, res) => {
     al2,
     tlpc,
     harga,
-
   } = req.body;
   var x = sub.toString();
   db.query(
@@ -481,94 +524,176 @@ router.post("/inputsbu", (req, res) => {
       pjd,
       harga,
       nc,
-      date
+      date,
     ],
     (err, results) => {
       if (err) throw err;
-      if (al1 == undefined){
-        db.query("INSERT INTO invoice_sbu (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,"SBU"+" "+klasifikasi +" "+service,"SUB "+x+" "+nbu,harga]),
-        res.render("inputsbu.hbs", { msg: "SUKSES INPUT DATA" });  
-      }else{
-        db.query("INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",[nc,al1,al2,tlpc],(err,results)=>{
-          if (err) throw err
-          db.query("INSERT INTO invoice_sbu (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,"SBU"+" "+klasifikasi +" "+service,"SUB "+x+" "+nbu,harga]),
+      if (al1 == undefined) {
+        db.query(
+          "INSERT INTO invoice_sbu (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+          [
+            nc,
+            "SBU" + " " + klasifikasi + " " + service,
+            "SUB " + x + " " + nbu,
+            harga,
+          ]
+        ),
           res.render("inputsbu.hbs", { msg: "SUKSES INPUT DATA" });
-        })
+      } else {
+        db.query(
+          "INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",
+          [nc, al1, al2, tlpc],
+          (err, results) => {
+            if (err) throw err;
+            db.query(
+              "INSERT INTO invoice_sbu (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+              [
+                nc,
+                "SBU" + " " + klasifikasi + " " + service,
+                "SUB " + x + " " + nbu,
+                harga,
+              ]
+            ),
+              res.render("inputsbu.hbs", { msg: "SUKSES INPUT DATA" });
+          }
+        );
       }
     }
   );
 });
 
 router.post("/inputiso", (req, res) => {
-  const { nbu, service, kode, np, keterangan, pjd, date,nc,
+  const {
+    nbu,
+    service,
+    kode,
+    np,
+    keterangan,
+    pjd,
+    date,
+    nc,
     al1,
     al2,
     tlpc,
-    harga, } = req.body;
-    var x = kode.toString()
-    db.query("INSERT INTO data_hold_iso (nbu,service,kode,np,keterangan,pjd,nm_client,harga,tgl_masuk) VALUES (?,?,?,?,?,?,?,?,?)",[nbu,service,x,np,keterangan,pjd,nc,harga,date],(err,result)=>{
-      if (err) throw err
-      if (al1 == undefined){
-        db.query("INSERT INTO invoice_iso (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,service+" ISO",x,harga],(err,result)=>{
-          if(err) throw err
-          res.render("inputsbu.hbs", { msg: "SUKSES INPUT DATA" });
-        })
-      }else{
-        db.query("INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",[nc,al1,al2,tlpc],(err,results)=>{
-          if (err) throw err
-          db.query("INSERT INTO invoice_iso (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,service +" ISO",x,harga]),
-          res.render("inputsbu.hbs", { msg: "SUKSES INPUT DATA" });
-        })
+    harga,
+  } = req.body;
+  var x = kode.toString();
+  db.query(
+    "INSERT INTO data_hold_iso (nbu,service,kode,np,keterangan,pjd,nm_client,harga,tgl_masuk) VALUES (?,?,?,?,?,?,?,?,?)",
+    [nbu, service, x, np, keterangan, pjd, nc, harga, date],
+    (err, result) => {
+      if (err) throw err;
+      if (al1 == undefined) {
+        db.query(
+          "INSERT INTO invoice_iso (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+          [nc, service + " ISO", x, harga],
+          (err, result) => {
+            if (err) throw err;
+            res.render("inputsbu.hbs", { msg: "SUKSES INPUT DATA" });
+          }
+        );
+      } else {
+        db.query(
+          "INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",
+          [nc, al1, al2, tlpc],
+          (err, results) => {
+            if (err) throw err;
+            db.query(
+              "INSERT INTO invoice_iso (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+              [nc, service + " ISO", x, harga]
+            ),
+              res.render("inputsbu.hbs", { msg: "SUKSES INPUT DATA" });
+          }
+        );
       }
-    })
-
+    }
+  );
 });
 
 router.post("/inputk3", (req, res) => {
-  const { nama, service, pelatihan, jdw, keterangan, pjd, date,nc,
+  const {
+    nama,
+    service,
+    pelatihan,
+    jdw,
+    keterangan,
+    pjd,
+    date,
+    nc,
     al1,
     al2,
     tlpc,
-    harga, } = req.body;
+    harga,
+  } = req.body;
   db.query(
     "INSERT INTO data_hold_k3 (nama,service,pelatihan,jadwal,keterangan,pjd,nm_client,harga,tgl_masuk) VALUES(?,?,?,?,?,?,?,?,?)",
-    [nama, service, pelatihan, jdw, keterangan, pjd,nc,harga, date,],
+    [nama, service, pelatihan, jdw, keterangan, pjd, nc, harga, date],
     (err, results) => {
       if (err) throw err;
-      if (al1 == undefined){
-        db.query("INSERT INTO invoice_k3 (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,service+" "+pelatihan,"a.n "+nama,harga]),
-        res.render("inputk3.hbs", { msg: "SUKSES INPUT PESERTA" });  
-      }else{
-        db.query("INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",[nc,al1,al2,tlpc],(err,results)=>{
-          if (err) throw err
-          db.query("INSERT INTO invoice_k3 (id,nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,service+" "+pelatihan,"a.n "+nama,harga]),
-          res.render("inputk3.hbs", { msg: "SUKSES INPUT PESERTA" });  
-        })
+      if (al1 == undefined) {
+        db.query(
+          "INSERT INTO invoice_k3 (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+          [nc, service + " " + pelatihan, "a.n " + nama, harga]
+        ),
+          res.render("inputk3.hbs", { msg: "SUKSES INPUT PESERTA" });
+      } else {
+        db.query(
+          "INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",
+          [nc, al1, al2, tlpc],
+          (err, results) => {
+            if (err) throw err;
+            db.query(
+              "INSERT INTO invoice_k3 (id,nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+              [nc, service + " " + pelatihan, "a.n " + nama, harga]
+            ),
+              res.render("inputk3.hbs", { msg: "SUKSES INPUT PESERTA" });
+          }
+        );
       }
     }
   );
 });
 
 router.post("/inputakta", (req, res) => {
-  const { np,cnbu, tlp, service, jenis, keterangan, pjd, date,nc,
+  const {
+    np,
+    cnbu,
+    tlp,
+    service,
+    jenis,
+    keterangan,
+    pjd,
+    date,
+    nc,
     al1,
     al2,
     tlpc,
-    harga, } = req.body;
+    harga,
+  } = req.body;
   db.query(
     "INSERT INTO data_hold_akta (np,tlp,jenis,service,keterangan,cnbu,pjd,nm_client,harga,tgl_masuk) VALUES(?,?,?,?,?,?,?,?,?,?)",
-    [np, tlp, jenis, service, keterangan,cnbu, pjd,nc,harga,date],
+    [np, tlp, jenis, service, keterangan, cnbu, pjd, nc, harga, date],
     (err, results) => {
       if (err) throw err;
-      if (al1 == undefined){
-        db.query("INSERT INTO invoice_akta (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,"Akta "+jenis,service+" Akta "+cnbu,harga]),
-        res.render("inputakta.hbs", { msg: "SUKSES INPUT DATA" });  
-      }else{
-        db.query("INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",[nc,al1,al2,tlpc],(err,results)=>{
-          if (err) throw err
-          db.query("INSERT INTO invoice_akta (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",[nc,"Akta "+jenis,service+" Akta "+cnbu,harga]),
-          res.render("inputakta.hbs", { msg: "SUKSES INPUT DATA" });  
-        })
+      if (al1 == undefined) {
+        db.query(
+          "INSERT INTO invoice_akta (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+          [nc, "Akta " + jenis, service + " Akta " + cnbu, harga]
+        ),
+          res.render("inputakta.hbs", { msg: "SUKSES INPUT DATA" });
+      } else {
+        db.query(
+          "INSERT INTO tbl_client (nm_client,alamat1,alamat2,tlp) VALUES (?,?,?,?)",
+          [nc, al1, al2, tlpc],
+          (err, results) => {
+            if (err) throw err;
+            db.query(
+              "INSERT INTO invoice_akta (nm_client,produk,keterangan,harga) VALUES (?,?,?,?)",
+              [nc, "Akta " + jenis, service + " Akta " + cnbu, harga]
+            ),
+              res.render("inputakta.hbs", { msg: "SUKSES INPUT DATA" });
+          }
+        );
       }
     }
   );
@@ -577,7 +702,7 @@ router.post("/searchska", (req, res) => {
   try {
     proses = [];
     const search = req.body.search;
-    
+
     if (req.session.loggedin) {
       db.query(
         "SELECT * FROM data_hold_ska WHERE id = ?",
@@ -609,8 +734,19 @@ router.post("/searchska", (req, res) => {
 });
 
 router.post("/updateska", (req, res) => {
-  const { nama, nik, npwp, service, klasifikasi, kode, pjd, date,harga,ket } = req.body;
-  var desc =req.body.desc
+  const {
+    nama,
+    nik,
+    npwp,
+    service,
+    klasifikasi,
+    kode,
+    pjd,
+    date,
+    harga,
+    ket,
+  } = req.body;
+  var desc = req.body.desc;
   const id = proses[0][0].id;
   var aw = new Date(date).toJSON().slice(0, 10).replace("T", " ");
   if (!req.session.loggedin) {
@@ -620,36 +756,58 @@ router.post("/updateska", (req, res) => {
   } else if (desc == undefined) {
     db.query(
       "UPDATE data_hold_ska SET nama = ?,nik = ?,npwp = ?,service = ?,klasifikasi = ?,kode = ?,pjd = ?,tgl_masuk = ?,harga = ?,keterangan =? WHERE id= ?",
-      [nama, nik, npwp, service, klasifikasi, kode, pjd, aw,harga,ket, id],
+      [nama, nik, npwp, service, klasifikasi, kode, pjd, aw, harga, ket, id],
       (err, results) => {
         if (err) throw err;
         datahold = [];
         proses = [];
-        db.query("UPDATE invoice_sbu SET keterangan =?,produk =?,harga =? WHERE id = ?",[klasifikasi+" "+kode+" a.n "+nama,klasifikasi,harga,id])
+        db.query(
+          "UPDATE invoice_sbu SET keterangan =?,produk =?,harga =? WHERE id = ?",
+          [klasifikasi + " " + kode + " a.n " + nama, klasifikasi, harga, id]
+        );
         res.render("home.hbs", { msg: "SUKSES UPDATE DATA" });
       }
     );
-  }else {
+  } else {
     db.query(
       "UPDATE data_hold_ska SET nama = ?,nik = ?,npwp = ?,service = ?,klasifikasi = ?,kode = ?,pjd = ?,tgl_masuk = ?,harga = ?,keterangan =? WHERE id= ?",
-      [nama, nik, npwp, service, klasifikasi, kode + " " +desc, pjd, aw,harga,ket, id],
+      [
+        nama,
+        nik,
+        npwp,
+        service,
+        klasifikasi,
+        kode + " " + desc,
+        pjd,
+        aw,
+        harga,
+        ket,
+        id,
+      ],
       (err, results) => {
         if (err) throw err;
         datahold = [];
         proses = [];
-        db.query("UPDATE invoice_sbu SET keterangan =?,produk =?,harga =? WHERE id = ?",[klasifikasi+" "+kode+" "+desc+" a.n "+nama,klasifikasi,harga,id])
+        db.query(
+          "UPDATE invoice_sbu SET keterangan =?,produk =?,harga =? WHERE id = ?",
+          [
+            klasifikasi + " " + kode + " " + desc + " a.n " + nama,
+            klasifikasi,
+            harga,
+            id,
+          ]
+        );
         res.render("home.hbs", { msg: "SUKSES UPDATE DATA" });
       }
     );
   }
-  
 });
 router.post("/deleteska", (req, res) => {
   const id = proses[0][0].id;
   if (req.session.loggedin) {
     db.query("DELETE FROM data_hold_ska WHERE id= ?", [id], (err, results) => {
       if (err) throw err;
-      db.query("DELETE FROM invoice_ska WHERE id= ?",id);
+      db.query("DELETE FROM invoice_ska WHERE id= ?", id);
       datahold = [];
       proses = [];
       res.render("home.hbs", { msg: "SUKSES DELETE DATA" });
@@ -701,7 +859,7 @@ router.post("/updatesbu", (req, res) => {
     keterangan,
     pjd,
     date,
-    harga
+    harga,
   } = req.body;
   const id = proses[0][0].id;
   if (!req.session.loggedin) {
@@ -727,7 +885,10 @@ router.post("/updatesbu", (req, res) => {
       ],
       (err, results) => {
         if (err) throw err;
-        db.query("UPDATE invoice_sbu SET produk =?,keterangan =?,harga =? WHERE id= ?",["SBU"+" "+klasifikasi +" "+service,"SUB "+sub,harga,id])
+        db.query(
+          "UPDATE invoice_sbu SET produk =?,keterangan =?,harga =? WHERE id= ?",
+          ["SBU" + " " + klasifikasi + " " + service, "SUB " + sub, harga, id]
+        );
         datahold = [];
         proses = [];
         res.render("home.hbs", { msg: "SUKSES UPDATE DATA" });
@@ -741,10 +902,10 @@ router.post("/deletesbu", (req, res) => {
   if (req.session.loggedin) {
     db.query("DELETE FROM data_hold_sbu WHERE id= ?", [id], (err, results) => {
       if (err) throw err;
-       // INVOICE
-       db.query("DELETE FROM invoice_sbu WHERE id =?",id,(err,results)=>{
-         if (err)throw err
-       });
+      // INVOICE
+      db.query("DELETE FROM invoice_sbu WHERE id =?", id, (err, results) => {
+        if (err) throw err;
+      });
       datahold = [];
       proses = [];
       res.render("home.hbs", { msg: "SUKSES DELETE DATA" });
@@ -784,9 +945,8 @@ router.post("/searchiso", (req, res) => {
   } catch (error) {}
 });
 
-
 router.post("/updateiso", (req, res) => {
-  const { nbu, service, kode, np, keterangan, pjd, date,harga } = req.body;
+  const { nbu, service, kode, np, keterangan, pjd, date, harga } = req.body;
   const id = proses[0][0].id;
   if (!req.session.loggedin) {
     res.render("login.hbs", {
@@ -796,10 +956,14 @@ router.post("/updateiso", (req, res) => {
     var aw = new Date(date).toJSON().slice(0, 10).replace("T", " ");
     db.query(
       "UPDATE data_hold_iso SET nbu =?,service=?,kode=?,np=?,keterangan=?,pjd=?,tgl_masuk=?,harga =? WHERE id= ?",
-      [nbu, service, kode, np, keterangan, pjd, aw,harga, id],
+      [nbu, service, kode, np, keterangan, pjd, aw, harga, id],
       (err, results) => {
         if (err) throw err;
-    db.query("UPDATE invoice_iso SET keterangan =?,harga=? WHERE id =?",[kode,harga,id])
+        db.query("UPDATE invoice_iso SET keterangan =?,harga=? WHERE id =?", [
+          kode,
+          harga,
+          id,
+        ]);
         datahold = [];
         proses = [];
         res.render("home.hbs", { msg: "SUKSES UPDATE DATA" });
@@ -813,10 +977,10 @@ router.post("/deleteiso", (req, res) => {
   if (req.session.loggedin) {
     db.query("DELETE FROM data_hold_iso WHERE id= ?", [id], (err, results) => {
       if (err) throw err;
-      db.query("DELETE FROM invoice_iso WHERE id =?",id,(err,results)=>{
-        if (err)throw err
+      db.query("DELETE FROM invoice_iso WHERE id =?", id, (err, results) => {
+        if (err) throw err;
       });
-     datahold = [];
+      datahold = [];
       datahold = [];
       proses = [];
       res.render("home.hbs", { msg: "SUKSES DELETE DATA" });
@@ -860,9 +1024,17 @@ router.post("/searchk3", (req, res) => {
   } catch (error) {}
 });
 
-
 router.post("/updatek3", (req, res) => {
-  const { nama, service, pelatihan, keterangan, pjd, date, jdw,harga } = req.body;
+  const {
+    nama,
+    service,
+    pelatihan,
+    keterangan,
+    pjd,
+    date,
+    jdw,
+    harga,
+  } = req.body;
   const id = proses[0][0].id;
   if (!req.session.loggedin) {
     res.render("login.hbs", {
@@ -873,10 +1045,13 @@ router.post("/updatek3", (req, res) => {
     var jj = new Date(jdw).toJSON().slice(0, 10).replace("T", " ");
     db.query(
       "UPDATE data_hold_k3 SET nama =?,service=?,pelatihan=?,keterangan=?,pjd=?,tgl_masuk=?,jadwal=?,harga =? WHERE id= ?",
-      [nama, service, pelatihan, keterangan, pjd, aw, jj,harga, id],
+      [nama, service, pelatihan, keterangan, pjd, aw, jj, harga, id],
       (err, results) => {
         if (err) throw err;
-        db.query("UPDATE invoice_k3 SET keterangan =?,harga =?,produk =? WHERE id =?",["A.n "+nama,harga,service+" "+pelatihan,id ])
+        db.query(
+          "UPDATE invoice_k3 SET keterangan =?,harga =?,produk =? WHERE id =?",
+          ["A.n " + nama, harga, service + " " + pelatihan, id]
+        );
         datahold = [];
         proses = [];
         res.render("home.hbs", { msg: "SUKSES UPDATE DATA" });
@@ -890,8 +1065,8 @@ router.post("/deletek3", (req, res) => {
   if (req.session.loggedin) {
     db.query("DELETE FROM data_hold_k3 WHERE id= ?", [id], (err, results) => {
       if (err) throw err;
-      db.query("DELETE FROM invoice_k3 WHERE id =?",id,(err,results)=>{
-        if (err)throw err
+      db.query("DELETE FROM invoice_k3 WHERE id =?", id, (err, results) => {
+        if (err) throw err;
       });
       datahold = [];
       proses = [];
@@ -935,7 +1110,17 @@ router.post("/searchakta", (req, res) => {
 });
 
 router.post("/updateakta", (req, res) => {
-  const { jenis, np, tlp, keterangan, pjd, date,cnbu,harga,service } = req.body;
+  const {
+    jenis,
+    np,
+    tlp,
+    keterangan,
+    pjd,
+    date,
+    cnbu,
+    harga,
+    service,
+  } = req.body;
   const id = proses[0][0].id;
   if (!req.session.loggedin) {
     res.render("login.hbs", {
@@ -943,12 +1128,16 @@ router.post("/updateakta", (req, res) => {
     });
   } else {
     var aw = new Date(date).toJSON().slice(0, 10).replace("T", " ");
-    db.query("UPDATE data_hold_akta SET jenis = ? ,np = ?,tlp = ?,keterangan = ?,pjd = ?,tgl_masuk = ?,cnbu = ?,harga = ? WHERE id = ?",
-      [jenis, np, tlp, keterangan, pjd, aw,cnbu,harga, id],
+    db.query(
+      "UPDATE data_hold_akta SET jenis = ? ,np = ?,tlp = ?,keterangan = ?,pjd = ?,tgl_masuk = ?,cnbu = ?,harga = ? WHERE id = ?",
+      [jenis, np, tlp, keterangan, pjd, aw, cnbu, harga, id],
       (err, results) => {
         if (err) throw err;
-        db.query("UPDATE invoice_akta SET produk=?,keterangan=?,harga=?  WHERE id =?",["Akta "+jenis,service+" Akta "+cnbu,harga,id]),
-        datahold = [];
+        db.query(
+          "UPDATE invoice_akta SET produk=?,keterangan=?,harga=?  WHERE id =?",
+          ["Akta " + jenis, service + " Akta " + cnbu, harga, id]
+        ),
+          (datahold = []);
         proses = [];
         res.render("home.hbs", { msg: "SUKSES UPDATE DATA" });
       }
@@ -961,8 +1150,8 @@ router.post("/deleteakta", (req, res) => {
   if (req.session.loggedin) {
     db.query("DELETE FROM data_hold_akta WHERE id= ?", [id], (err, results) => {
       if (err) throw err;
-      db.query("DELETE FROM invoice_akta WHERE id =?",id,(err,results)=>{
-        if (err)throw err
+      db.query("DELETE FROM invoice_akta WHERE id =?", id, (err, results) => {
+        if (err) throw err;
       });
       datahold = [];
       proses = [];
@@ -970,325 +1159,523 @@ router.post("/deleteakta", (req, res) => {
     });
   }
 });
-router.post("/invoice",(req,res)=>{
+router.post("/invoice", (req, res) => {
   var today = new Date();
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   var yyyy = today.getFullYear();
-  today = mm + '/' + dd + '/' + yyyy;
+  today = mm + "/" + dd + "/" + yyyy;
   const id = req.body.id;
-  db.query("SELECT * FROM tbl_client WHERE id=?",id,(err,results)=>{
-   if (results.length == 0){
-    res.redirect("cetakinvoice")
-   }else{
-    db.query("SELECT * FROM invoice_ska WHERE nm_client =?",results[0].nm_client,(err,results)=>{
-    inv.push(results)
-    })
-    db.query("SELECT * FROM invoice_sbu WHERE nm_client =?",results[0].nm_client,(err,results)=>{
-      inv.push(results)
-    })
-    db.query("SELECT * FROM invoice_k3 WHERE nm_client =?",results[0].nm_client,(err,results)=>{
-      inv.push(results)
-    })
-    db.query("SELECT * FROM invoice_iso WHERE nm_client =?",results[0].nm_client,(err,results)=>{
-      inv.push(results)
-    })
-    db.query("SELECT * FROM invoice_akta WHERE nm_client =?",results[0].nm_client,(err,results)=>{
-      inv.push(results)
-    })
-    res.render("invoice.hbs",{dd :results[0] ,prosesSKA :inv[0],prosesSBU :inv[1],prosesK3 :inv[2],prosesISO:inv[3],prosesAKTA :inv[4],date :today,a:"show"})
-    inv=[]
-  }
-  })
-})
+  db.query("SELECT * FROM tbl_client WHERE id=?", id, (err, results) => {
+    if (results.length == 0) {
+      res.redirect("cetakinvoice");
+    } else {
+      db.query(
+        "SELECT * FROM invoice_ska WHERE nm_client =?",
+        results[0].nm_client,
+        (err, results) => {
+          inv.push(results);
+        }
+      );
+      db.query(
+        "SELECT * FROM invoice_sbu WHERE nm_client =?",
+        results[0].nm_client,
+        (err, results) => {
+          inv.push(results);
+        }
+      );
+      db.query(
+        "SELECT * FROM invoice_k3 WHERE nm_client =?",
+        results[0].nm_client,
+        (err, results) => {
+          inv.push(results);
+        }
+      );
+      db.query(
+        "SELECT * FROM invoice_iso WHERE nm_client =?",
+        results[0].nm_client,
+        (err, results) => {
+          inv.push(results);
+        }
+      );
+      db.query(
+        "SELECT * FROM invoice_akta WHERE nm_client =?",
+        results[0].nm_client,
+        (err, results) => {
+          inv.push(results);
+        }
+      );
+      res.render("invoice.hbs", {
+        dd: results[0],
+        prosesSKA: inv[0],
+        prosesSBU: inv[1],
+        prosesK3: inv[2],
+        prosesISO: inv[3],
+        prosesAKTA: inv[4],
+        date: today,
+        a: "show",
+      });
+      inv = [];
+    }
+  });
+});
 
-router.post("/saveinv",(req,res)=>{
+router.post("/saveinv", (req, res) => {
   var today = new Date();
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   var yyyy = today.getFullYear();
-  today = yyyy + '-' + mm + '-' + dd;
-  const {idSka,idSbu,idIso,idK3,idAkta,sisa,dp,total,nmc,noinv} = req.body
-  console.log(idSka,idSbu,idIso,idK3,idAkta,sisa,dp,total,nmc,noinv)
+  today = yyyy + "-" + mm + "-" + dd;
+  const {
+    idSka,
+    idSbu,
+    idIso,
+    idK3,
+    idAkta,
+    sisa,
+    dp,
+    total,
+    nmc,
+    noinv,
+  } = req.body;
+  console.log(idSka, idSbu, idIso, idK3, idAkta, sisa, dp, total, nmc, noinv);
 
-  var ska,sbu,iso,k3,akta; 
-  if (idSka == undefined ) {
-    ska = "Tidak ada proses"
-  } else if(idSka.length > 1){
-    ska = idSka.toString()
-      for (let i = 0; i < idSka.length; i++) {
-        db.query("DELETE FROM invoice_ska WHERE id = ?",idSka[i],(err,result)=>{
-          if (err) throw err
-        })
+  var ska, sbu, iso, k3, akta;
+  if (idSka == undefined) {
+    ska = "Tidak ada proses";
+  } else if (idSka.length > 1) {
+    ska = idSka.toString();
+    for (let i = 0; i < idSka.length; i++) {
+      db.query(
+        "DELETE FROM invoice_ska WHERE id = ?",
+        idSka[i],
+        (err, result) => {
+          if (err) throw err;
+        }
+      );
+    }
+  } else {
+    ska = idSka;
+    db.query("DELETE FROM invoice_ska WHERE id = ?", ska, (err, result) => {
+      if (err) throw err;
+    });
+  }
+  if (idSbu == undefined) {
+    sbu = "Tidak ada proses";
+  } else if (idSbu.length > 1) {
+    sbu = idSbu.toString();
+    for (let i = 0; i < idSbu.length; i++) {
+      db.query(
+        "DELETE FROM invoice_sbu WHERE id = ?",
+        idSbu[i],
+        (err, result) => {
+          if (err) throw err;
+        }
+      );
+    }
+  } else {
+    sbu = idSbu;
+    db.query("DELETE FROM invoice_sbu WHERE id = ?", sbu, (err, result) => {
+      if (err) throw err;
+    });
+  }
+
+  if (idIso == undefined) {
+    iso = "Tidak ada proses";
+  } else if (idIso.length > 1) {
+    iso = idIso.toString();
+    for (let i = 0; i < idIso.length; i++) {
+      db.query(
+        "DELETE FROM invoice_iso WHERE id = ?",
+        idIso[i],
+        (err, result) => {
+          if (err) throw err;
+        }
+      );
+    }
+  } else {
+    iso = idIso;
+    db.query("DELETE FROM invoice_iso WHERE id = ?", iso, (err, result) => {
+      if (err) throw err;
+    });
+  }
+  if (idK3 == undefined) {
+    ik3 = 0;
+    k3 = "Tidak ada proses";
+  } else if (idK3.length > 1) {
+    k3 = idK3.toString();
+    for (let i = 0; i < idK3.length; i++) {
+      db.query(
+        "DELETE FROM invoice_k3 WHERE id = ?",
+        idK3[i],
+        (err, result) => {
+          if (err) throw err;
+        }
+      );
+    }
+  } else {
+    k3 = idK3;
+    db.query("DELETE FROM invoice_k3 WHERE id = ?", k3, (err, result) => {
+      if (err) throw err;
+    });
+  }
+  if (idAkta == undefined) {
+    akta = "Tidak ada proses";
+  } else if (idAkta.length > 1) {
+    akta = idAkta.toString();
+    for (let i = 0; i < idAkta.length; i++) {
+      db.query(
+        "DELETE FROM invoice_akta WHERE id = ?",
+        idAkta[i],
+        (err, result) => {
+          if (err) throw err;
+        }
+      );
+    }
+  } else {
+    akta = idAkta;
+    db.query("DELETE FROM invoice_akta WHERE id = ?", akta, (err, result) => {
+      if (err) throw err;
+    });
+  }
+
+  if (dp === "") {
+    db.query(
+      "INSERT INTO inv_cetak_lunas (nm_client,no_inv,idSKA,idSBU,idISO,idK3,idAKTA,total,tgl_cetak) VALUES (?,?,?,?,?,?,?,?,?)",
+      [nmc, noinv, ska, sbu, iso, k3, akta, total, today],
+      (err, result) => {
+        if (err) throw err;
+        res.send("oke");
       }
-  }else{
-    ska =idSka
-    db.query("DELETE FROM invoice_ska WHERE id = ?",ska,(err,result)=>{
-      if (err) throw err
-    })
+    );
+  } else {
+    db.query(
+      "INSERT INTO inv_cetak_dp (nm_client,no_inv,idSKA,idSBU,idISO,idK3,idAKTA,total,DP,sisa,tgl_cetak) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+      [nmc, noinv, ska, sbu, iso, k3, akta, total, dp, sisa, today],
+      (err, result) => {
+        if (err) throw err;
+        res.send("oke");
+      }
+    );
   }
-if (idSbu == undefined ) {
-  sbu = "Tidak ada proses"
-} else if(idSbu.length > 1){
-  sbu = idSbu.toString()
-  for (let i = 0; i < idSbu.length; i++) {
-    db.query("DELETE FROM invoice_sbu WHERE id = ?",idSbu[i],(err,result)=>{
-      if (err) throw err
-    })
-  }
-}else{
-  sbu =idSbu
-  db.query("DELETE FROM invoice_sbu WHERE id = ?",sbu,(err,result)=>{
-    if (err) throw err
-  })
-}
+});
 
-if (idIso == undefined ) {
-  iso = "Tidak ada proses"
-} else if(idIso.length > 1){
-  iso = idIso.toString()
-  for (let i = 0; i < idIso.length; i++) {
-    db.query("DELETE FROM invoice_iso WHERE id = ?",idIso[i],(err,result)=>{
-      if (err) throw err
-    })
-  }
-}else{
-  iso =idIso
-  db.query("DELETE FROM invoice_iso WHERE id = ?",iso,(err,result)=>{
-    if (err) throw err
-  })
-}
-if (idK3 == undefined ) {
-  ik3=0
-  k3 = "Tidak ada proses"
-} else if(idK3.length > 1){
-  k3 = idK3.toString()
-  for (let i = 0; i < idK3.length; i++) {
-    db.query("DELETE FROM invoice_k3 WHERE id = ?",idK3[i],(err,result)=>{
-      if (err) throw err
-    })
-  }
-}else{
-  k3 =idK3
-  db.query("DELETE FROM invoice_k3 WHERE id = ?",k3,(err,result)=>{
-    if (err) throw err
-  })
-}
-if (idAkta == undefined ) {
-  akta = "Tidak ada proses"
-} else if(idAkta.length > 1){
-  akta = idAkta.toString()
-  for (let i = 0; i < idAkta.length; i++) {
-    db.query("DELETE FROM invoice_akta WHERE id = ?",idAkta[i],(err,result)=>{
-      if (err) throw err
-    })
-  }
-}else{
-  akta =idAkta
-  db.query("DELETE FROM invoice_akta WHERE id = ?",akta,(err,result)=>{
-    if (err) throw err
-  })
-}
-
-if (dp === "") {
-  db.query("INSERT INTO inv_cetak_lunas (nm_client,no_inv,idSKA,idSBU,idISO,idK3,idAKTA,total,tgl_cetak) VALUES (?,?,?,?,?,?,?,?,?)",[nmc,noinv,ska,sbu,iso,k3,akta,total,today],(err,result)=>{
-  if(err) throw err
-  res.send("oke")
-  })
-
-} else {
-  db.query("INSERT INTO inv_cetak_dp (nm_client,no_inv,idSKA,idSBU,idISO,idK3,idAKTA,total,DP,sisa,tgl_cetak) VALUES (?,?,?,?,?,?,?,?,?,?,?)",[nmc,noinv,ska,sbu,iso,k3,akta,total,dp,sisa,today],(err,result)=>{
-    if(err) throw err
-    res.send("oke")
-  })
-}
-})
-
-router.post("/createNo",(req,res)=>{
+router.post("/createNo", (req, res) => {
   var int = 27;
-  var jam = 12
+  var jam = 12;
   var today = new Date();
   var h = today.getHours();
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   var yyyy = today.getFullYear();
-  today = yyyy + '-' + mm + '-' + dd;    
-  if (dd == int && jam == h){
+  today = yyyy + "-" + mm + "-" + dd;
+  if (dd == int && jam == h) {
     db.query("TRUNCATE TABLE inv;");
-    db.query("ALTER table inv Auto_increment = 36")
-    db.query("INSERT INTO `inv` (`id`, `nAn`) VALUES (NULL, 'wea');")
-    res.send("OKE")
-  }else {
-
-      db.query("INSERT INTO `inv` (`id`, `nAn`) VALUES (NULL, 'wea');")
-      res.send("OKE")
+    db.query("ALTER table inv Auto_increment = 36");
+    db.query("INSERT INTO `inv` (`id`, `nAn`) VALUES (NULL, 'wea');");
+    res.send("OKE");
+  } else {
+    db.query("INSERT INTO `inv` (`id`, `nAn`) VALUES (NULL, 'wea');");
+    res.send("OKE");
   }
-})
+});
 
-
-router.post("/proses",(req,res)=>{
-  const {idska,idsbu,idk3,idiso,idakta}=req.body
+router.post("/proses", (req, res) => {
+  const { idska, idsbu, idk3, idiso, idakta } = req.body;
   var today = new Date();
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   var yyyy = today.getFullYear();
-  today = yyyy + '-' + mm + '-' + dd;
-
+  today = yyyy + "-" + mm + "-" + dd;
 
   //SKA
   if (idska == "Tidak ada proses") {
-    
-  }else{
-    var arrska = JSON.parse("["+idska+"]")
+  } else {
+    var arrska = JSON.parse("[" + idska + "]");
     for (let i = 0; i < arrska.length; i++) {
-      db.query("INSERT INTO data_proses_ska (id,nama,nik,service,klasifikasi,kode,pjd,tgl_proses,nm_client,harga) SELECT id,nama,nik,service,klasifikasi,kode,pjd,tgl_masuk,nm_client,harga FROM data_hold_ska WHERE id= ?",arrska[i],(err,result)=>{
-        if (err) throw err
-        db.query("DELETE FROM data_hold_ska WHERE id = ?",arrska[i],(err,result)=>{
-          if(err) throw err
-        });
-        db.query("UPDATE data_proses_ska SET tgl_proses =? WHERE id =?",[today,arrska[i]])
-      })}}
+      db.query(
+        "INSERT INTO data_proses_ska (id,nama,nik,service,klasifikasi,kode,pjd,tgl_proses,nm_client,harga) SELECT id,nama,nik,service,klasifikasi,kode,pjd,tgl_masuk,nm_client,harga FROM data_hold_ska WHERE id= ?",
+        arrska[i],
+        (err, result) => {
+          if (err) throw err;
+          db.query(
+            "DELETE FROM data_hold_ska WHERE id = ?",
+            arrska[i],
+            (err, result) => {
+              if (err) throw err;
+            }
+          );
+          db.query("UPDATE data_proses_ska SET tgl_proses =? WHERE id =?", [
+            today,
+            arrska[i],
+          ]);
+        }
+      );
+    }
+  }
 
-      //SBU
-      if (idsbu == "Tidak ada proses") {
-    
-      }else{
-        var arrsbu =JSON.parse("["+idsbu+"]")
-        for (let i = 0; i < arrsbu.length; i++) {
-          db.query("INSERT INTO data_proses_sbu (id,nbu,npwpbu,service,klasifikasi,sub,np,tlp,pjd,tgl_proses,nm_client,harga) SELECT id,nbu,npwpbu,service,klasifikasi,sub,np,tlp,pjd,tgl_masuk,nm_client,harga FROM data_hold_sbu WHERE id= ?",arrsbu[i],(err,result)=>{
-            if (err) throw err
-            db.query("DELETE FROM data_hold_sbu WHERE id= ?",arrsbu[i])
-            db.query("UPDATE data_proses_sbu SET tgl_proses =? WHERE id=?",[today,arrsbu[i]])
-          })}}
+  //SBU
+  if (idsbu == "Tidak ada proses") {
+  } else {
+    var arrsbu = JSON.parse("[" + idsbu + "]");
+    for (let i = 0; i < arrsbu.length; i++) {
+      db.query(
+        "INSERT INTO data_proses_sbu (id,nbu,npwpbu,service,klasifikasi,sub,np,tlp,pjd,tgl_proses,nm_client,harga) SELECT id,nbu,npwpbu,service,klasifikasi,sub,np,tlp,pjd,tgl_masuk,nm_client,harga FROM data_hold_sbu WHERE id= ?",
+        arrsbu[i],
+        (err, result) => {
+          if (err) throw err;
+          db.query("DELETE FROM data_hold_sbu WHERE id= ?", arrsbu[i]);
+          db.query("UPDATE data_proses_sbu SET tgl_proses =? WHERE id=?", [
+            today,
+            arrsbu[i],
+          ]);
+        }
+      );
+    }
+  }
 
-          //ISO
-          if (idiso == "Tidak ada proses") {
-    
-          }else{
-  var arriso = JSON.parse("["+idiso+"]")
-            for (let i = 0; i < arriso.length; i++) {
-              db.query("INSERT INTO data_proses_iso (id,nbu,service,kode,np,pjd,tgl_proses,nm_client,harga) SELECT id,nbu,service,kode,np,pjd,tgl_masuk,nm_client,harga FROM data_hold_iso WHERE id= ?",arriso[i],(err,result)=>{
-                if (err) throw err
-                db.query("DELETE FROM data_hold_iso WHERE id=?",arriso[i])
-                db.query("UPDATE data_proses_iso SET tgl_proses =? WHERE id =?",[today,arriso[i]])
-              })}}
+  //ISO
+  if (idiso == "Tidak ada proses") {
+  } else {
+    var arriso = JSON.parse("[" + idiso + "]");
+    for (let i = 0; i < arriso.length; i++) {
+      db.query(
+        "INSERT INTO data_proses_iso (id,nbu,service,kode,np,pjd,tgl_proses,nm_client,harga) SELECT id,nbu,service,kode,np,pjd,tgl_masuk,nm_client,harga FROM data_hold_iso WHERE id= ?",
+        arriso[i],
+        (err, result) => {
+          if (err) throw err;
+          db.query("DELETE FROM data_hold_iso WHERE id=?", arriso[i]);
+          db.query("UPDATE data_proses_iso SET tgl_proses =? WHERE id =?", [
+            today,
+            arriso[i],
+          ]);
+        }
+      );
+    }
+  }
 
-              //K3
-              if (idk3 == "Tidak ada proses") {
-    
-              }else{
-                var arrk3 = JSON.parse("["+idk3+"]")
-                for (let i = 0; i < arrk3.length; i++) {
-                  db.query("INSERT INTO data_proses_k3 (id,nama,service,pelatihan,pjd,tgl_proses,nm_client,harga) SELECT id,nama,service,pelatihan,pjd,tgl_masuk,nm_client,harga FROM data_hold_k3 WHERE id= ?",arrk3[i],(err,result)=>{
-                    if (err) throw err
-                    db.query("DELETE FROM data_hold_k3 WHERE id=?",arrk3[i])
-                    db.query("UPDATE data_proses_k3 SET tgl_proses =? WHERE id=?",[today,arrk3[i]])
-                  })}}
-                    // AKTA
-                    if (idakta == "Tidak ada proses") {
-    
-                    }else{
-                      var arrakta = JSON.parse("["+idakta+"]")
-                      for (let i = 0; i < arrakta.length; i++) {
-                        db.query("INSERT INTO data_proses_akta (id,jenis,service,nbu,tlp,pjd,tgl_proses,nm_client,harga) SELECT id,jenis,service,cnbu,tlp,pjd,tgl_masuk,nm_client,harga FROM data_hold_akta WHERE id= ?",arrakta[i],(err,result)=>{
-                          if (err) throw err
-                          db.query("DELETE FROM data_hold_akta WHERE id=?",arrakta[i])
-                          db.query("UPDATE data_proses_akta SET tgl_proses =? WHERE id=?",[today,arrakta[i]])
-                        })}}
-                        res.redirect("home")
+  //K3
+  if (idk3 == "Tidak ada proses") {
+  } else {
+    var arrk3 = JSON.parse("[" + idk3 + "]");
+    for (let i = 0; i < arrk3.length; i++) {
+      db.query(
+        "INSERT INTO data_proses_k3 (id,nama,service,pelatihan,pjd,tgl_proses,nm_client,harga) SELECT id,nama,service,pelatihan,pjd,tgl_masuk,nm_client,harga FROM data_hold_k3 WHERE id= ?",
+        arrk3[i],
+        (err, result) => {
+          if (err) throw err;
+          db.query("DELETE FROM data_hold_k3 WHERE id=?", arrk3[i]);
+          db.query("UPDATE data_proses_k3 SET tgl_proses =? WHERE id=?", [
+            today,
+            arrk3[i],
+          ]);
+        }
+      );
+    }
+  }
+  // AKTA
+  if (idakta == "Tidak ada proses") {
+  } else {
+    var arrakta = JSON.parse("[" + idakta + "]");
+    for (let i = 0; i < arrakta.length; i++) {
+      db.query(
+        "INSERT INTO data_proses_akta (id,jenis,service,nbu,tlp,pjd,tgl_proses,nm_client,harga) SELECT id,jenis,service,cnbu,tlp,pjd,tgl_masuk,nm_client,harga FROM data_hold_akta WHERE id= ?",
+        arrakta[i],
+        (err, result) => {
+          if (err) throw err;
+          db.query("DELETE FROM data_hold_akta WHERE id=?", arrakta[i]);
+          db.query("UPDATE data_proses_akta SET tgl_proses =? WHERE id=?", [
+            today,
+            arrakta[i],
+          ]);
+        }
+      );
+    }
+  }
+  res.redirect("home");
+});
+router.post("/updatestatska", (req, res) => {
+  const { idska, status } = req.body;
+  db.query(
+    "UPDATE data_proses_ska SET status = ? WHERE id =?",
+    [status, idska],
+    (err, result) => {
+      if (err) throw err;
+      res.render("home.hbs", { msg: "SUKSES UPDATE STATUS SKA" });
+    }
+  );
+});
 
+router.post("/updatestatsbu", (req, res) => {
+  const { idsbu, status } = req.body;
+  db.query(
+    "UPDATE data_proses_sbu SET status = ? WHERE id =?",
+    [status, idsbu],
+    (err, result) => {
+      if (err) throw err;
+      res.render("home.hbs", { msg: "SUKSES UPDATE STATUS SBU" });
+    }
+  );
+});
 
-
-})
-router.post("/updatestatska",(req,res)=>{
-  const {idska,status}= req.body
-  db.query("UPDATE data_proses_ska SET status = ? WHERE id =?",[status,idska],(err,result)=>{
-    if (err) throw err
-    res.render("home.hbs" ,{msg:"SUKSES UPDATE STATUS SKA"})
-  })
-})
-
-router.post("/updatestatsbu",(req,res)=>{
-  const {idsbu,status}= req.body
-  db.query("UPDATE data_proses_sbu SET status = ? WHERE id =?",[status,idsbu],(err,result)=>{
-    if (err) throw err
-    res.render("home.hbs" ,{msg:"SUKSES UPDATE STATUS SBU"})
-  })
-})
-
-router.post("/deleteinv",(req,res)=>{
-  const {idska,idsbu,idk3,idiso,idakta,idinv,no_inv}=req.body
- var today = new Date();
- var dd = String(today.getDate()).padStart(2, '0');
- var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
- var yyyy = today.getFullYear();
- today = yyyy + '-' + mm + '-' + dd;
+router.post("/deleteinv", (req, res) => {
+  const { idska, idsbu, idk3, idiso, idakta, idinv, no_inv } = req.body;
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  var yyyy = today.getFullYear();
+  today = yyyy + "-" + mm + "-" + dd;
   if (idska == "Tidak ada proses") {
-    
-  }else{
-    var arrska = JSON.parse("["+idska+"]")
+  } else {
+    var arrska = JSON.parse("[" + idska + "]");
     for (let i = 0; i < arrska.length; i++) {
-      db.query("SELECT * FROM data_proses_ska WHERE id=?",arrska[i],(err,result)=>{
-        if (err) throw err
-        db.query("INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",[result[0].nm_client,no_inv,result[0].service+" "+result[0].klasifikasi,result[0].kode+" a.n "+result[0].nama,result[0].harga,result[0].tgl_proses,today],(err,result)=>{
-          if(err)throw err
-          db.query("DELETE FROM data_proses_ska WHERE id=?",arrska[i])
-        })
-      })}}
-      //SBU
-      if (idsbu == "Tidak ada proses") {
-    
-      }else{
-        var arrsbu =JSON.parse("["+idsbu+"]")
-        for (let i = 0; i < arrsbu.length; i++) {
-          db.query("SELECT * FROM data_proses_sbu WHERE id= ?",arrsbu[i],(err,result)=>{
-            db.query("INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",[result[0].nm_client,no_inv,"SBU "+result[0].klasifikasi+" "+result[0].service,result[0].sub+" "+result[0].nbu,result[0].harga,result[0].tgl_proses,today],(err,result)=>{
-              if(err)throw err
-              db.query("DELETE FROM data_proses_sbu WHERE id=?",arrsbu[i])
-            })
-          })}}
+      db.query(
+        "SELECT * FROM data_proses_ska WHERE id=?",
+        arrska[i],
+        (err, result) => {
+          if (err) throw err;
+          db.query(
+            "INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",
+            [
+              result[0].nm_client,
+              no_inv,
+              result[0].service + " " + result[0].klasifikasi,
+              result[0].kode + " a.n " + result[0].nama,
+              result[0].harga,
+              result[0].tgl_proses,
+              today,
+            ],
+            (err, result) => {
+              if (err) throw err;
+              db.query("DELETE FROM data_proses_ska WHERE id=?", arrska[i]);
+            }
+          );
+        }
+      );
+    }
+  }
+  //SBU
+  if (idsbu == "Tidak ada proses") {
+  } else {
+    var arrsbu = JSON.parse("[" + idsbu + "]");
+    for (let i = 0; i < arrsbu.length; i++) {
+      db.query(
+        "SELECT * FROM data_proses_sbu WHERE id= ?",
+        arrsbu[i],
+        (err, result) => {
+          db.query(
+            "INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",
+            [
+              result[0].nm_client,
+              no_inv,
+              "SBU " + result[0].klasifikasi + " " + result[0].service,
+              result[0].sub + " " + result[0].nbu,
+              result[0].harga,
+              result[0].tgl_proses,
+              today,
+            ],
+            (err, result) => {
+              if (err) throw err;
+              db.query("DELETE FROM data_proses_sbu WHERE id=?", arrsbu[i]);
+            }
+          );
+        }
+      );
+    }
+  }
 
-          //ISO
-          if (idiso == "Tidak ada proses") {
-    
-          }else{
-    var arriso = JSON.parse("["+idiso+"]")
-            for (let i = 0; i < arriso.length; i++) {
-              db.query("SELECT * FROM data_proses_iso WHERE id=? ",arriso[i],(err,result)=>{
-                if (err) throw err
-                db.query("INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",[result[0].nm_client,no_inv,result[0].service+" ISO",result[0].kode+" "+result[0].nbu,result[0].harga,result[0].tgl_proses,today],(err,result)=>{
-                  if(err)throw err
-                  db.query("DELETE FROM data_proses_iso WHERE id=?",arriso[i])
-                })
-              })}}
+  //ISO
+  if (idiso == "Tidak ada proses") {
+  } else {
+    var arriso = JSON.parse("[" + idiso + "]");
+    for (let i = 0; i < arriso.length; i++) {
+      db.query(
+        "SELECT * FROM data_proses_iso WHERE id=? ",
+        arriso[i],
+        (err, result) => {
+          if (err) throw err;
+          db.query(
+            "INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",
+            [
+              result[0].nm_client,
+              no_inv,
+              result[0].service + " ISO",
+              result[0].kode + " " + result[0].nbu,
+              result[0].harga,
+              result[0].tgl_proses,
+              today,
+            ],
+            (err, result) => {
+              if (err) throw err;
+              db.query("DELETE FROM data_proses_iso WHERE id=?", arriso[i]);
+            }
+          );
+        }
+      );
+    }
+  }
 
-              //K3
-              if (idk3 == "Tidak ada proses") {
-    
-              }else{
-                var arrk3 = JSON.parse("["+idk3+"]")
-                for (let i = 0; i < arrk3.length; i++) {
-                  db.query("SELECT * FROM data_proses_k3 WHERE id= ?",arrk3[i],(err,result)=>{
-                    if (err) throw err
-                    db.query("INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",[result[0].nm_client,no_inv,result[0].service+" "+result[0].pelatihan,result[0].nama,result[0].harga,result[0].tgl_proses,today],(err,result)=>{
-                      if(err)throw err
-                      db.query("DELETE FROM data_proses_k3 WHERE id=?",arrk3[i])
-                    })
-                  })}}
-                    // AKTA
-                    if (idakta == "Tidak ada proses") {
-    
-                    }else{
-                      var arrakta = JSON.parse("["+idakta+"]")
-                      for (let i = 0; i < arrakta.length; i++) {
-                        db.query("SELECT * FROM data_proses_akta WHERE id= ?",arrakta[i],(err,result)=>{
-                          if (err) throw err
-                          db.query("INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",[result[0].nm_client,no_inv,"AKTA "+result[0].jenis+" "+result[0].service,result[0].nbu,result[0].harga,result[0].tgl_proses,today],(err,result)=>{
-                            if(err)throw err
-                            db.query("DELETE FROM data_proses_akta WHERE id=?",arrakta[i])
-                          })
-                        })}}
-                        db.query("DELETE FROM inv_cetak_lunas WHERE id=?",idinv)
-                        res.redirect("pembayaran")
-})
+  //K3
+  if (idk3 == "Tidak ada proses") {
+  } else {
+    var arrk3 = JSON.parse("[" + idk3 + "]");
+    for (let i = 0; i < arrk3.length; i++) {
+      db.query(
+        "SELECT * FROM data_proses_k3 WHERE id= ?",
+        arrk3[i],
+        (err, result) => {
+          if (err) throw err;
+          db.query(
+            "INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",
+            [
+              result[0].nm_client,
+              no_inv,
+              result[0].service + " " + result[0].pelatihan,
+              result[0].nama,
+              result[0].harga,
+              result[0].tgl_proses,
+              today,
+            ],
+            (err, result) => {
+              if (err) throw err;
+              db.query("DELETE FROM data_proses_k3 WHERE id=?", arrk3[i]);
+            }
+          );
+        }
+      );
+    }
+  }
+  // AKTA
+  if (idakta == "Tidak ada proses") {
+  } else {
+    var arrakta = JSON.parse("[" + idakta + "]");
+    for (let i = 0; i < arrakta.length; i++) {
+      db.query(
+        "SELECT * FROM data_proses_akta WHERE id= ?",
+        arrakta[i],
+        (err, result) => {
+          if (err) throw err;
+          db.query(
+            "INSERT INTO report (nm_client,no_inv,produk,keterangan,harga,tgl_proses,tgl_selesai) VALUES (?,?,?,?,?,?,?)",
+            [
+              result[0].nm_client,
+              no_inv,
+              "AKTA " + result[0].jenis + " " + result[0].service,
+              result[0].nbu,
+              result[0].harga,
+              result[0].tgl_proses,
+              today,
+            ],
+            (err, result) => {
+              if (err) throw err;
+              db.query("DELETE FROM data_proses_akta WHERE id=?", arrakta[i]);
+            }
+          );
+        }
+      );
+    }
+  }
+  db.query("DELETE FROM inv_cetak_lunas WHERE id=?", idinv);
+  res.redirect("pembayaran");
+});
 module.exports = router;
