@@ -51,6 +51,7 @@ app.set("viw engine", "hbs");
 
 //router
 app.use("/", authRouter, apiLimiter);
+app.use(apiLimiter);
 
 app.listen(port, () => {
   console.log("Server Start");
