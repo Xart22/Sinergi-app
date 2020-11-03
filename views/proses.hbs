@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>SinergiAPP</title>
+    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+    <!-- JS file -->
+    <script src="asset/js/jquery.easy-autocomplete.js"></script>
+
+    <!-- CSS file -->
+    <link rel="stylesheet" href="asset/css/easy-autocomplete.css">
+    <link rel="stylesheet" href="asset/css/easy-autocomplete.themes.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/home"><img src="asset/img/sinergi.png" style="width:auto; height :50px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" href="/home">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/dataholding">Holding</a>
+                <div class="dropdown">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Input Data
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="/inputska">SKA / SKT</a>
+                        <a class="dropdown-item" href="/inputsbu">SBU</a>
+                        <a class="dropdown-item" href="/inputiso">ISO</a>
+                        <a class="dropdown-item" href="/inputk3">AK3U</a>
+                        <a class="dropdown-item" href="/inputakta">AKTA</a>
+                    </div>
+                </div>
+                <a class="nav-link" href="/cetakinvoice">Invoice</a>
+                <a class="nav-link" href="/pembayaran">Pembayaran</a>
+            </div>
+        </div>
+        <div class="welcome">
+            {{#if usr}}
+            <span style="text-transform:uppercase">Welcome Back {{usr}}</span>
+            {{/if}}
+        </div>
+    </nav>
+
+    <form class="form-inline my-2 my-lg-0" action="/searchska" method="POST">
+        <input class="form-control mr-sm-2" type="search" placeholder="ID SKA" name="search" aria-label="Search"
+            id="search">
+    </form>
+    {{#if msg}}
+    <h4>{{msg}}</h4>
+    {{/if}}
+    {{#each data}}
+    <div class="data">
+        <div class="crud">
+            <button type="submit" class="btn btn-success" id="proses" onclick="proses()">Proses</button>
+            <button type="submit" class="btn btn-warning" id="update" onclick="update()">Update</button>
+            <button type="submit" class="btn btn-danger" id="delete" onclick="deleteska()">Delete</button>
+        </div>
+        <form action="/prosesska" method="POST" id="form">
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Nama</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="nama" id="input" value="{{this.nama}}"
+                        disabled>
+                </div>
+            </div>
+            <div class="form-group row" id="status" style="display: none;">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Status</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="status" id="input" disabled
+                        value="Proses" size="6">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">NIK</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="nik" id="input" value="{{this.nik}}"
+                        disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">NPWP</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" id="input" value="{{this.npwp}}" name="npwp"
+                        disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Service</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="service" id="input"
+                        value="{{this.service}}" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Klasifikasi</label>
+                <div class="col-sm-5">
+                    <select name="klasifikasi" disabled id="klas">
+                        <option value="{{this.klasifikasi}}">{{this.klasifikasi}}</option>
+                        <option value="SKA MUDA">SKA MUDA</option>
+                        <option value="SKA MADYA">SKA MADYA</option>
+                        <option value="SKA UTAMA">SKA UTAMA</option>
+                        <option value="SKT KELAS I">SKT KELAS I</option>
+                        <option value="SKT KELAS II"> SKT KELAS II</option>
+                        <option value="SKT KELAS III"> SKT KELAS III</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Kode</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" id="kode" required name="kode"
+                        value="{{this.kode}}" disabled onclick="valde()">
+                    <input id="data-holder" name="desc" readonly disabled />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Keterangan</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" id="input" name="ket"
+                        value="{{this.keterangan}}" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Harga</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" id="input" name="harga"
+                        value="{{this.harga}}" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">PJD</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="pjd" id="input" value="{{this.pjd}}"
+                        disabled>
+                </div>
+            </div>{{/each}}
+            {{#if date}}
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">
+                    {{date}}</label>{{/if}}{{#if tgl}}
+                <div class="col-sm-5">
+                    <input type="date" name="date" value="{{tgl}}" disabled>
+                </div>
+            </div>
+            <div class="pro">
+                <button type="submit" class="btn btn-success" id="go" disabled>GO</button>
+                <button type="button" class="btn btn-success" id="cn" disabled onclick="disable()">Cancel</button>
+            </div>
+        </form>
+    </div>
+    {{/if}}
+    <script>
+        var form = document.getElementById("form")
+        var p = document.getElementById("proses")
+        var u = document.getElementById("update")
+        var d = document.getElementById("delete")
+        var go = document.getElementById("go")
+        var cn = document.getElementById("cn")
+        var se = document.getElementById("search")
+        var sta = document.getElementById("status")
+        var kode = document.getElementById("kode")
+        function enable() {
+            var input = document.getElementsByTagName("INPUT")
+            var i;
+            for (i = 0; i < input.length; i++) {
+                input[i].disabled = false;
+            }
+        }
+        function disable() {
+            var input = document.getElementsByTagName("INPUT")
+            var i;
+            for (i = 0; i < input.length; i++) {
+                input[i].disabled = true;
+                u.disabled = false;
+                go.disabled = true;
+                d.disabled = false;
+                cn.disabled = true;
+                p.disabled = false;
+                se.disabled = false;
+            }
+        }
+        function proses() {
+            document.location = 'http://sinergi-tes.herokuapp.com/cetakinvoice';
+
+        }
+        function update() {
+            var form = document.getElementById("form")
+            form.action = "/updateska";
+            p.disabled = true;
+            go.disabled = false;
+            d.disabled = true;
+            cn.disabled = false;
+            enable()
+            sta.style.display = "none"
+            var klas = document.getElementById("klas")
+            klas.disabled = false
+        }
+        function deleteska() {
+            var form = document.getElementById("form")
+            form.action = "/deleteska";
+            p.disabled = true;
+            go.disabled = false;
+            u.disabled = true;
+            cn.disabled = false;
+            enable()
+            sta.style.display = "none"
+        }
+        function valde() {
+            kode.value = ""
+
+        }
+    </script>
+    <script src="asset/js/kodeska.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
+
+</body>
+
+</html>

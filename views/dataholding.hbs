@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>SinergiAPP</title>
+    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<body onload="notif()">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/home"><img src="asset/img/sinergi.png" style="width:auto; height :50px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link active" href="/dataholding">Holding</a>
+                <div class="dropdown">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Input Data
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="/inputska">SKA / SKT</a>
+                        <a class="dropdown-item" href="/inputsbu">SBU</a>
+                        <a class="dropdown-item" href="/inputiso">ISO</a>
+                        <a class="dropdown-item" href="/inputk3">AK3U</a>
+                        <a class="dropdown-item" href="/inputakta">AKTA</a>
+                    </div>
+                </div>
+                <a class="nav-link" href="/cetakinvoice">Invoice</a>
+                <a class="nav-link" href="/pembayaran">Pembayaran</a>
+            </div>
+        </div>
+        <div class="welcome">
+            {{#if usr}}
+            <span style="text-transform:uppercase">Welcome Back {{usr}}</span>
+            {{/if}}
+        </div>
+    </nav>
+    {{! DATA HOLD SKA}}
+    <h1>DATA HOLDING SKA / SKT</h1>
+    <table class="table" border="1px">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nama</th>
+                <th scope="col">NIK</th>
+                <th scope="col">NPWP</th>
+                <th scope="col">SERVICE</th>
+                <th scope="col">KLASIFIKASI</th>
+                <th scope="col">KODE</th>
+                <th scope="col">Keterangan</th>
+                <th scope="col">PJD</th>
+                <th scope="col1">Nama Client</th>
+                <th scope="col">TGL MASUK</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each ska}}
+            <tr>
+                <th>{{this.id}}</th>
+                <td>{{this.nama}}</td>
+                <td>{{this.nik}}</td>
+                <td>{{this.npwp}}</td>
+                <td>{{this.service}}</td>
+                <td>{{this.klasifikasi}}</td>
+                <td>{{this.kode}}</td>
+                <td>{{this.keterangan}}</td>
+                <td>{{this.pjd}}</td>
+                <td>{{this.nm_client}}</td>
+                <td>{{this.tgl_masuk}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <a href="/detailska"><button type="button" class="btn btn-success">Detail</button></a>
+
+    {{! DATA HOLD SBU}}
+    <h1>DATA HOLDING SBU</h1>
+    <table class="table" border="1px">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nama Badan Usaha</th>
+                <th scope="col">NPWP Badan Usaha</th>
+                <th scope="col">Service</th>
+                <th scope="col">klasifikasi</th>
+                <th scope="col">Kode Sub</th>
+                <th scope="col">Nama Pengurus</th>
+                <th scope="col">No.Telpon</th>
+                <th scope="col">Keterangan</th>
+                <th scope="col">PJD</th>
+                <th scope="col">Nama Client</th>
+                <th scope="col">TGL MASUK</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each sbu}}
+            <tr>
+                <th>{{this.id}}</th>
+                <td>{{this.nbu}}</td>
+                <td>{{this.npwpbu}}</td>
+                <td>{{this.service}}</td>
+                <td>{{this.klasifikasi}}</td>
+                <td>{{this.sub}}</td>
+                <td>{{this.np}}</td>
+                <td>{{this.tlp}}</td>
+                <td>{{this.keterangan}}</td>
+                <td>{{this.pjd}}</td>
+                <td>{{this.nm_client}}</td>
+                <td>{{this.tgl_masuk}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <a href="/detailsbu"><button type="button" class="btn btn-success">Detail</button></a>
+
+    {{! DATA HOLD ISO}}
+    <h1>DATA HOLDING ISO</h1>
+    <table class="table" border="1px">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nama Badan Usaha</th>
+                <th scope="col">Service</th>
+                <th scope="col">ISO</th>
+                <th scope="col">Marketing</th>
+                <th scope="col">Keterangan</th>
+                <th scope="col">PJD</th>
+                <th scope="col">Nama Client</th>
+                <th scope="col">TGL MASUK</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each iso}}
+            <tr>
+                <th>{{this.id}}</th>
+                <td>{{this.nbu}}</td>
+                <td>{{this.service}}</td>
+                <td>{{this.kode}}</td>
+                <td>{{this.np}}</td>
+                <td>{{this.keterangan}}</td>
+                <td>{{this.pjd}}</td>
+                <td>{{this.nm_client}}</td>
+                <td>{{this.tgl_masuk}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+
+    <a href="/detailiso"><button type="button" class="btn btn-success">Detail</button></a>
+
+    {{! DATA HOLD AK3U}}
+    <h1>DATA HOLDING AK3U</h1>
+    <table class="table" border="1px">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nama</th>
+                <th scope="col">Service</th>
+                <th scope="col">Keterangan</th>
+                <th scope="col">Jadwal</th>
+                <th scope="col">PJD</th>
+                <th scope="col">Nama Client</th>
+                <th scope="col">TGL MASUK</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each k3}}
+            <tr>
+                <th>{{this.id}}</th>
+                <td>{{this.nama}}</td>
+                <td>{{this.service}}</td>
+                <td>{{this.keterangan}}</td>
+                <td>{{this.jadwal}}</td>
+                <td>{{this.pjd}}</td>
+                <td>{{this.nm_client}}</td>
+                <td>{{this.tgl_masuk}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <a href="/detailk3"><button type="button" class="btn btn-success">Detail</button></a>
+
+    {{! DATA HOLD AKTA}}
+    <h1>DATA HOLDING AKTA</h1>
+    <table class="table" border="1px">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nama Pengurus</th>
+                <th scope="col">No. Telp</th>
+                <th scope="col">Jenis Akta</th>
+                <th scope="col">Service</th>
+                <th scope="col">Keterangan</th>
+                <th scope="col">PJD</th>
+                <th scope="col">TGL MASUK</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each akta}}
+            <tr>
+                <th>{{this.id}}</th>
+                <td>{{this.np}}</td>
+                <td>{{this.tlp}}</td>
+                <td>{{this.jenis}}</td>
+                <td>{{this.service}}</td>
+                <td>{{this.keterangan}}</td>
+                <td>{{this.pjd}}</td>
+                <td>{{this.tgl_masuk}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <a href="/detailakta"><button type="button" class="btn btn-success">Detail</button></a>
+    {{#if msg}}
+    <h4 id="hide" style="display : none;">{{msg}}</h4>
+    {{/if}}
+    <script>
+        function notif() {
+            var ms = document.getElementById("hide").textContent;
+            if (ms == "HAIII") {
+
+            } else {
+                if (!alert(ms)) document.location = 'http://sinergi-tes.herokuapp.com/';
+            }
+        }
+    </script>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
+</body>
+
+</html>

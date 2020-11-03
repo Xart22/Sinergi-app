@@ -1,0 +1,26 @@
+.dp {
+  display: none;
+}
+.aweu button {
+  display: none;
+}
+.containere {
+  position: relative;
+  right: 8rem;
+  top: 8rem;
+}
+.ttd {
+  display: inline;
+  position: absolute;
+  bottom: 26rem;
+  left: 7.5rem;
+  width: fit-content;
+  height: fit-content;
+}
+.hasil {
+  position: fixed;
+  right: 22rem;
+  bottom: 30.5rem;
+  width: 40%;
+  text-align: center;
+}

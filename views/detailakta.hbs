@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>SinergiAPP</title>
+    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/home"><img src="asset/img/sinergi.png" style="width:auto; height :50px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" href="/home">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/dataholding">Holding</a>
+                <div class="dropdown">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Input Data
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="/inputska">SKA / SKT</a>
+                        <a class="dropdown-item" href="/inputsbu">SBU</a>
+                        <a class="dropdown-item" href="/inputiso">ISO</a>
+                        <a class="dropdown-item" href="/inputk3">AK3U</a>
+                        <a class="dropdown-item" href="/inputakta">AKTA</a>
+                    </div>
+                </div>
+                <a class="nav-link" href="/cetakinvoice">Invoice</a>
+                <a class="nav-link" href="/pembayaran">Pembayaran</a>
+            </div>
+        </div>
+        <div class="welcome">
+            {{#if usr}}
+            <span style="text-transform:uppercase">Welcome Back {{usr}}</span>
+            {{/if}}
+        </div>
+    </nav>
+    {{#if msg}}
+    <h4 style="text-align: center;">{{msg}}</h4>
+    {{/if}}
+    <form class="form-inline my-2 my-lg-0" action="/searchakta" method="POST">
+        <input class="form-control mr-sm-2" type="search" placeholder="ID AKTA" name="search" aria-label="Search"
+            id="search">
+
+    </form>
+    {{#each data}}
+    <div class="data">
+        <div class="crud">
+            <button type="submit" class="btn btn-success" id="proses" onclick="proses()">Proses</button>
+            <button type="submit" class="btn btn-warning" id="update" onclick="update()">Update</button>
+            <button type="submit" class="btn btn-danger" id="delete" onclick="deleteska()">Delete</button>
+        </div>
+        <form action="/prosessbu" method="POST" id="form">
+            <div class="form-group row" id="cnb" style="display: none;">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Calon Nama Badan
+                    Usaha</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="nbu" id="" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Nama Pengurus</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="np" id="input" value="{{this.np}}"
+                        disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">No. Telp</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" id="input" value="{{this.tlp}}" name="tlp"
+                        disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Jenis Akta</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" id="input" value="{{this.jenis}}"
+                        name="jenis" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Calon Nama Badan
+                    Usaha</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="cnbu" id="input" value="{{this.cnbu}}"
+                        disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Service</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="service" value="{{this.service}}"
+                        disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Keterangan</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="keterangan"
+                        value="{{this.keterangan}}" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Harga</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" id="harga" name="harga"
+                        value="{{this.harga}}" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">PJD</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-sm" name="pjd" id="input" value="{{this.pjd}}"
+                        disabled>
+                </div>
+            </div>
+            {{/each}}
+            {{#if date}}
+            <div class="form-group row">
+                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">
+                    {{date}}</label>{{/if}}{{#if tgl}}
+                <div class="col-sm-5">
+                    <input type="date" name="date" value="{{tgl}}" disabled>
+                </div>
+            </div>
+            <div class="pro">
+                <button type="submit" class="btn btn-success" id="go" disabled>GO</button>
+                <button type="button" class="btn btn-success" id="cn" disabled onclick="disable()">Cancel</button></div>
+        </form>
+    </div>
+    {{/if}}
+    <script>
+        var form = document.getElementById("form")
+        var p = document.getElementById("proses")
+        var u = document.getElementById("update")
+        var d = document.getElementById("delete")
+        var go = document.getElementById("go")
+        var cn = document.getElementById("cn")
+        var se = document.getElementById("search")
+        var cnb = document.getElementById("cnb")
+        function enable() {
+            var input = document.getElementsByTagName("INPUT")
+            var i;
+            for (i = 0; i < input.length; i++) {
+                input[i].disabled = false;
+            }
+        }
+        function disable() {
+            var input = document.getElementsByTagName("INPUT")
+            var i;
+            for (i = 0; i < input.length; i++) {
+                input[i].disabled = true;
+                u.disabled = false;
+                go.disabled = true;
+                d.disabled = false;
+                cn.disabled = true;
+                p.disabled = false;
+                se.disabled = false;
+                cnb.style.display = "none";
+
+            }
+        }
+        function proses() {
+            document.location = 'http://sinergi-tes.herokuapp.com/cetakinvoice';
+
+        }
+        function update() {
+            var form = document.getElementById("form")
+            form.action = "/updateakta";
+            p.disabled = true;
+            go.disabled = false;
+            d.disabled = true;
+            cn.disabled = false;
+            enable()
+            cnb.style.display = "none";
+        }
+        function deleteska() {
+            var form = document.getElementById("form")
+            form.action = "/deleteakta";
+            p.disabled = true;
+            go.disabled = false;
+            u.disabled = true;
+            cn.disabled = false;
+            enable()
+            cnb.style.display = "none";
+        }
+        var rupiah = document.getElementById('harga');
+        rupiah.addEventListener('keyup', function (e) {
+            // tambahkan 'Rp.' pada saat ketik nominal di form kolom input
+            // gunakan fungsi formatRupiah() untuk mengubah nominal angka yang di ketik menjadi format angka
+            rupiah.value = formatRupiah(this.value);
+        });
+        /* Fungsi formatRupiah */
+        function formatRupiah(angka, prefix) {
+            var number_string = angka.replace(/[^,\d]/g, '').toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            // tambahkan titik jika yang di input sudah menjadi angka satuan ribuan
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix == undefined ? rupiah : (rupiah ? + rupiah : '');
+        }      
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
+
+</body>
+
+</html>

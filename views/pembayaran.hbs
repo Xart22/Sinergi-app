@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>SinergiAPP</title>
+    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<body onload="notif()">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/home"><img src="asset/img/sinergi.png" style="width:auto; height :50px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" href="/home">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/dataholding">Holding</a>
+                <div class="dropdown">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Input Data
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="/inputska">SKA / SKT</a>
+                        <a class="dropdown-item" href="/inputsbu">SBU</a>
+                        <a class="dropdown-item" href="/inputiso">ISO</a>
+                        <a class="dropdown-item" href="/inputk3">AK3U</a>
+                        <a class="dropdown-item" href="/inputakta">AKTA</a>
+                    </div>
+                </div>
+                <a class="nav-link" href="/cetakinvoice">Invoice</a>
+                <a class="nav-link" href="/pembayaran">Pembayaran</a>
+            </div>
+        </div>
+        <div class="welcome">
+            {{#if usr}}
+            <span style="text-transform:uppercase">Welcome Back {{usr}}</span>
+            {{/if}}
+        </div>
+    </nav>
+    {{! DATA HOLD SKA}}
+    <h1>PEMBAYARAN NON DP</h1>
+    <table class="table" border="1px">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">Nama</th>
+                <th scope="col">No. Invoice</th>
+                <th scope="col">Proses ID SKA</th>
+                <th scope="col">Proses ID SBU</th>
+                <th scope="col">Proses ID ISO</th>
+                <th scope="col">Proses ID K3</th>
+                <th scope="col">Proses ID AKTA</th>
+                <th scope="col">Tertagih</th>
+                <th scope="col">TGL Cetak</th>
+                <th scope="col">Option</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each lns}}
+            <tr>
+                <th>{{this.nm_client}}</th>
+                <th>{{this.no_inv}}</th>
+                <td>{{this.idSKA}}</td>
+                <td>{{this.idSBU}}</td>
+                <td>{{this.idISO}}</td>
+                <td>{{this.idK3}}</td>
+                <td>{{this.idAKTA}}</td>
+                <td>{{this.total}}</td>
+                <td>{{this.tgl_cetak}}</td>
+                <td>
+                    <form action="/proses" method="POST">
+                        <input type="hidden" name="idska" value="{{this.idSKA}}">
+                        <input type="hidden" name="idsbu" value="{{this.idSBU}}">
+                        <input type="hidden" name="idiso" value="{{this.idISO}}">
+                        <input type="hidden" name="idk3" value="{{this.idK3}}">
+                        <input type="hidden" name="idakta" value="{{this.idAKTA}}">
+                        <button type="submit" class="btn btn-success" id="dp" style="font-size: 8.5px;">Terima
+                            Pembayaran</button></form>
+                    <form action="/deleteinv" method="post">
+                        <input type="hidden" name="idinv" value="{{this.id}}">
+                        <input type="hidden" name="no_inv" value="{{this.no_inv}}">
+                        <input type="hidden" name="idska" value="{{this.idSKA}}">
+                        <input type="hidden" name="idsbu" value="{{this.idSBU}}">
+                        <input type="hidden" name="idiso" value="{{this.idISO}}">
+                        <input type="hidden" name="idk3" value="{{this.idK3}}">
+                        <input type="hidden" name="idakta" value="{{this.idAKTA}}">
+                        <button type="submit" class="btn btn-success" id="dplns" style="font-size: 8.5px;">Proses
+                            Selesai</button></form>
+
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <h1>PEMBAYARAN DP</h1>
+    <table class=" table" border="1px">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">Nama</th>
+                <th scope="col">No. Invoice</th>
+                <th scope="col">Proses ID SKA</th>
+                <th scope="col">Proses ID SBU</th>
+                <th scope="col">Proses ID ISO</th>
+                <th scope="col">Proses ID K3</th>
+                <th scope="col">Proses ID AKTA</th>
+                <th scope="col">Total Pembayaran</th>
+                <th scope="col">DP Tertagih</th>
+                <th scope="col">Sisa Pembayaran</th>
+                <th scope="col">TGL Cetak</th>
+                <th scope="col">Option</th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each dp}}
+            <tr>
+                <th>{{this.nm_client}}</th>
+                <th>{{this.no_inv}}</th>
+                <td>{{this.idSKA}}</td>
+                <td>{{this.idSBU}}</td>
+                <td>{{this.idISO}}</td>
+                <td>{{this.idK3}}</td>
+                <td>{{this.idAKTA}}</td>
+                <td>{{this.total}}</td>
+                <td>{{this.DP}}</td>
+                <td>{{this.sisa}}</td>
+                <td>{{this.tgl_cetak}}</td>
+                <td>
+                    <form action="/proses" method="POST">
+                        <input type="hidden" name="idska" value="{{this.idSKA}}">
+                        <input type="hidden" name="idsbu" value="{{this.idSBU}}">
+                        <input type="hidden" name="idiso" value="{{this.idISO}}">
+                        <input type="hidden" name="idk3" value="{{this.idK3}}">
+                        <input type="hidden" name="idakta" value="{{this.idAKTA}}">
+                        <button type="submit" class="btn btn-success" id="dp" style="font-size: 8.5px;">Terima
+                            Pembayaran</button></form>
+                    <form action="/deleteinv" method="post">
+                        <input type="hidden" name="idinv" value="{{this.id}}">
+                        <button type="submit" class="btn btn-success" id="dplns" style="font-size: 8.5px;">Proses
+                            Selesai</button></form>
+
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    {{#if msg}}
+    <h4 id="hide" style="display : none;">{{msg}}</h4>
+    {{/if}}
+    <script>
+        function notif() {
+            var ms = document.getElementById("hide").textContent;
+            if (ms == "HAIII") {
+
+            } else {
+                if (!alert(ms)) document.location = 'http://sinergi-tes.herokuapp.com/';
+            }
+        }
+    </script>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
+</body>
+
+</html>

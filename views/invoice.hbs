@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>SinergiAPP</title>
+    <link rel="stylesheet" href="asset/css/invoice.css">
+    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="asset/css/print.css" media="print">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+</head>
+
+<body onload="tes()">
+    <nav class=" navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/home"><img src="asset/img/sinergi.png" style="width:auto; height :50px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/dataholding">Holding</a>
+                <div class="dropdown">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Input Data
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="/inputska">SKA / SKT</a>
+                        <a class="dropdown-item" href="/inputsbu">SBU</a>
+                        <a class="dropdown-item" href="/inputiso">ISO</a>
+                        <a class="dropdown-item" href="/inputk3">AK3U</a>
+                        <a class="dropdown-item" href="/inputakta">AKTA</a>
+                    </div>
+                </div>
+                <a class="nav-link active" href="/cetakinvoice">Invoice</a>
+                <a class="nav-link" href="/pembayaran">Pembayaran</a>
+            </div>
+        </div>
+        <div class="welcome">
+            {{#if usr}}
+            <span style="text-transform:uppercase">Welcome Back {{usr}}</span>
+            {{/if}}
+        </div>
+    </nav>
+    {{#if hide}}
+    <h1>DATA CLIENT</h1>
+    <table class="table" border="1px">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nama Client</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each tbl}}
+            <tr>
+                <th>{{this.id}}</th>
+                <td>{{this.nm_client}}</td>
+            </tr>{{/each}}
+        </tbody>
+    </table>
+    <form class="form-inline my-2 my-lg-0" action="/invoice" method="POST">
+        <input class="form-control mr-sm-2" type="search" placeholder="ID Client Yang Akan Dicetak" name="id"
+            aria-label="Search" id="search" style="width: 16.5rem">
+    </form>
+    {{/if}}
+    {{#if dd}}
+
+    <div class="dp">
+        <div class="form-group">
+            <label for="colFormLabelSm" class="col-sm-1 col-form-label col-form-label-sm"><strong>DP</strong> </label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control form-control-sm" id="dp">
+                <button type="button" class="btn btn-warning" onclick="potong()">Potong DP</button>
+            </div>
+        </div>
+    </div>
+    <form action="" method="post" class="aweu" id="createNo">
+        <button type="submit" class="btn btn-warning"> Cetak No Invoice</button>
+    </form>
+    <form action="" method="post" class="aweu" id="saveinv">
+        <button type="submit" class="btn btn-success"> Save Invoice</button>
+
+        <div class="containere">
+            <div class="header">
+                <img src="asset/img/sinergi.png" style="height: 100px; widht:70px; margin: auto; ">
+                <img src="asset/img/logo.png" style="margin: auto; margin-left:50px;">
+                <h1 style="float:right; margin: auto; margin-left:50px"><strong style="color: white;">INVOICE</strong>
+                </h1>
+            </div>
+            <div class="sinergi">
+                <table id="table">
+                    {{#if date}}
+                    <tr>
+                        <td>JL.Buah Batu No.221 Lt.2</td>
+                        <p style="float:right" id="ppp">
+                        </p><br><br>
+                        <p id="pp" style="float: right;"></p>
+                        <input type="hidden" name="noinv" id="inv">
+                    </tr>
+                    {{/if}}
+                    <tr>
+                        <td>Turangga,Kec.Lengkong, Kota Bandung, Jawa Barat, 40264</td>
+
+                    </tr>
+                    <tr>
+                        <td> +62 821-1917-4777</td>
+                    </tr>
+                    <tr>
+                        <td>info@s.sinergisertikasi.com</td>
+                    </tr>
+                    <tr>
+                        <td> www.sinergisertifikasi.com</td>
+                    </tr>
+                </table>
+                <br>
+                <br>
+
+
+                <table>
+                    <tr>
+                        <th>TO :</th>
+                        <td style="width: 10rem;"></td>
+                        <input type="hidden" name="nmc" value="{{dd.nm_client}}">
+                        <th>{{dd.nm_client}}</th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>{{dd.tlp}}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>{{dd.alamat1}}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>{{dd.alamat2}}</td>
+                    </tr>
+                </table> {{/if}}
+            </div>
+            {{#if a}}
+            <div class="content" id="content">
+                <table id="tb">
+                    <tr>
+                        <th style="width: 8rem;">PRODUK</th>
+                        <th style="width: 25rem;">KETERANGAN</th>
+                        <th style="width: 10rem;" colspan="2">HARGA</th>
+                        <th style="width: 10rem;" colspan="2">TOTAL</th>
+                    </tr>
+                    {{#each prosesSKA}}
+                    <tr onclick="remove(this)">
+                        <input type="hidden" value="{{this.id}}" name="idSka">
+                        <input type="hidden" value="{{this.keterangan}}" name="ketSka">
+                        <td style="text-align: start; font-size:13px">{{this.produk}}</td>
+                        <td style="text-align: start; font-size:12px">{{this.keterangan}}</td>
+                        <td>Rp.</td>
+                        <td id="harga">{{this.harga}}</td>
+                    </tr>
+                    {{/each}}
+
+
+                    {{#each prosesSBU}}
+                    <tr onclick="remove(this)">
+                        <input type="hidden" value="{{this.id}}" name="idSbu">
+                        <input type="hidden" value="{{this.keterangan}}" name="ketSbu">
+                        <td style="text-align: start; font-size:13px;">{{this.produk}}</td>
+                        <td style="text-align: start; font-size:12px">{{this.keterangan}}</td>
+                        <td>Rp.</td>
+                        <td id="harga">{{this.harga}}</td>
+                    </tr>
+                    {{/each}}
+                    {{#each prosesK3}}
+                    <tr onclick="remove(this)">
+                        <input type="hidden" value="{{this.id}}" name="idK3">
+                        <input type="hidden" value="{{this.keterangan}}" name="ketK3">
+                        <td style="text-align: start; font-size:13px">{{this.produk}}</td>
+                        <td style="text-align: start; font-size:12px">{{this.keterangan}}</td>
+                        <td>Rp.</td>
+                        <td id="harga">{{this.harga}}</td>
+                    </tr>
+                    {{/each}}
+
+
+                    {{#each prosesISO}}
+                    <tr onclick="remove(this)">
+                        <input type="hidden" value="{{this.id}}" name="idIso">
+                        <input type="hidden" value="{{this.keterangan}}" name="ketIso">
+                        <td style="text-align: start; font-size:13px">{{this.produk}}</td>
+                        <td style="text-align: start; font-size:12px">{{this.keterangan}}</td>
+                        <td>Rp.</td>
+                        <td id="harga">{{this.harga}}</td>
+                    </tr>
+                    {{/each}}
+
+
+                    {{#each prosesAKTA}}
+                    <tr onclick="remove(this)">
+                        <input type="hidden" value="{{this.id}}" name="idAkta">
+                        <input type="hidden" value="{{this.keterangan}}" name="ketAkta">
+                        <td style="text-align: start; font-size:13px">{{this.produk}}</td>
+                        <td style="text-align: start; font-size:12px">{{this.keterangan}}</td>
+                        <td>Rp.</td>
+                        <td id="harga">{{this.harga}}</td>
+                    </tr>
+                    {{/each}}
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: start;"></td>
+                        <td style="text-align: start;"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    <tr style="border :none ">
+                        <td style="text-align:start;border :none ;">&nbsp;&nbsp;&nbsp;&nbsp;Hormat Kami</td>
+                        <td style="text-align:center;border :none ;  font-weight: bold;">Terbilang</td>
+                        <td style="border :none ;"></td>
+                        <td style="border :none ;"><strong>SUB TOTAL</strong> </td>
+                        <td style="border :none ;">Rp.</td>
+                        <td id="total" style="border :none ;"></td>
+                        <input type="hidden" name="total" id="ttl">
+                    </tr>
+                    <tr style="border :none ">
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border-bottom: 2px black solid;"><strong>DP</strong></td>
+                        <td style="border-bottom: 2px black solid;">Rp.</td>
+                        <td style="border-bottom: 2px black solid;" id="dp1"></td>
+                        <input type="hidden" name="dp" id="dp3">
+                    </tr>
+                    <tr style="border :none ">
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"><strong>Sisa Pembayaran</strong> </td>
+                        <td style="border: none;">Rp.</td>
+                        <td style="border: none;" id="sisa"></td>
+                        <input type="hidden" name="sisa" id="sisah">
+                    </tr>
+                </table>
+            </div>
+    </form>
+    <br>
+    <p><strong>&nbsp;&nbsp;&nbsp;&nbsp;Merlina Findi</strong> </p>
+    <p style="text-align: center;"><strong>NOTE :</strong> Berkas akan diproses setelah pembayaran selesai <br>
+        Pembayaran Via Bank Mandiri <br>
+        A.n Denry Primaldi SE. 132-00-8885111-9</p>
+    <div class="footer">
+        <br>
+        <h1 style="text-align: center; color: white; margin:-20px;"><strong>THANK YOU FOR YOUR
+                BUSINESS !!!</strong>
+        </h1>
+    </div>
+    </div>
+    </div>
+    <div class="ttd">
+        <img src="asset/img/TTD_Merlina.png" style="height: 120px; float:left">
+    </div>
+    <div class="hasil">
+        <h1 style="text-decoration: underline; font-size:20px; font-weight: bold; color:black; text-transform: uppercase; font-style:italic;"
+            id="hasil">
+        </h1>
+    </div>
+    {{/if}}
+    <script src="asset/js/invoice.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
+</body>
+
+</html>

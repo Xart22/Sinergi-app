@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>SinergiAPP</title>
+    <link rel="stylesheet" href="asset/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<body onload="notif()">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/home"><img src="asset/img/sinergi.png" style="width:auto; height :50px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/dataholding">Holding</a>
+                <div class="dropdown">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Input Data
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="/inputska">SKA / SKT</a>
+                        <a class="dropdown-item" href="/inputsbu">SBU</a>
+                        <a class="dropdown-item" href="/inputiso">ISO</a>
+                        <a class="dropdown-item" href="/inputk3">AK3U</a>
+                        <a class="dropdown-item" href="/inputakta">AKTA</a>
+                    </div>
+                </div>
+                <a class="nav-link" href="/cetakinvoice">Invoice</a>
+                <a class="nav-link" href="/pembayaran">Pembayaran</a>
+            </div>
+        </div>
+        <div class="welcome">
+            {{#if usr}}
+            <span style="text-transform:uppercase">Welcome Back {{usr}}</span>
+        </div>
+    </nav>
+    <div class="inputdata" id="input">
+        <h2>INPUT DATA AKTA</h1>
+            <form action=" /inputakta" method="POST" id="form">
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Client</label>
+                    <div class="col-sm-5">
+                        <select name="client" id="client" onchange="cli()">
+                            <option disabled selected></option>
+                            <option value="NEW">NEW</option>
+                            <option value="EXISTING">EXISTING</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row" style="display: none;" id="nc">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Nama Client</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" name="nc" id="input" required>
+                    </div>
+                </div>
+                <div class="form-group row" style="display: none;" id="al1">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Alamat Client
+                        1</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" name="al1" id="input" required>
+                    </div>
+                </div>
+                <div class="form-group row" style="display: none;" id="al2">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Alamat Client
+                        2</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" name="al2" id="input" required>
+                    </div>
+                </div>
+                <div class="form-group row" style="display: none;" id="tlpc">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">No. Telp
+                        Client</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" name="tlpc" id="input" required>
+                    </div>
+                </div>
+                <div class="form-group row" id="nce" style="display: none;" id="nce">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Nama Client</label>
+                    <div class="col-sm-5">
+                        <select name="nc" onchange="te()" id="aw">
+                            <option disabled selected></option>
+                            {{#each client}}
+                            <option value="{{this.nm_client}}">{{this.nm_client}}</option>
+                            {{/each}}
+                        </select>
+
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Nama Pengurus</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" name="np" id="input" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">No. Telp</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" name="tlp" id="input" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Jenis Akta</label>
+                    <div class="col-sm-5">
+                        <select name="jenis">
+                            <option value="PT">PT</option>
+                            <option value="CV">CV</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Calon Nama Badan
+                        Usaha</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" name="cnbu" id="input" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Service</label>
+                    <div class="col-sm-5">
+                        <select name="service">
+                            <option value="Pembuatan">PEMBUATAN</option>
+                            <option value="Perubahan">PERUBAHAN</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Keterangan</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" id="input" required name="keterangan">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">PJD</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" name="pjd" id="input" readonly
+                            value="{{usr}}" style="text-transform: uppercase;">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Harga</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control form-control-sm" id="harga" required name="harga">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">
+                        Tanggal Masuk</label>
+                    <div class="col-sm-5">
+                        <input type="date" name="date" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success" id="go">Submit</button>
+            </form>
+    </div>{{/if}}
+    {{#if msg}}
+    <h4 id="hide" style="display : none;">{{msg}}</h4>
+    {{/if}}
+    <script>
+        var select = document.getElementById("client")
+        var nc = document.getElementById("nc")
+        var nce = document.getElementById("nce")
+        var al1 = document.getElementById("al1")
+        var al2 = document.getElementById("al2")
+        var tlp = document.getElementById("tlpc")
+        function notif() {
+            var ms = document.getElementById("hide").textContent;
+            if (ms == "HAIII") {
+
+            } else {
+                if (!alert(ms)) document.location = 'http://sinergi-tes.herokuapp.com/';
+            }
+        }
+        function br() {
+            nc.style.display = "";
+            al1.style.display = "";
+            al2.style.display = "";
+            tlp.style.display = "";
+            nce.style.display = "none";
+        }
+        function lm() {
+            nce.style.display = "";
+            nc.remove()
+            al1.remove()
+            al2.remove()
+            tlp.remove()
+        }
+
+
+        function cli() {
+            if (select.value == "NEW") {
+                br()
+            } else {
+                lm()
+            }
+        }
+        var rupiah = document.getElementById('harga');
+        rupiah.addEventListener('keyup', function (e) {
+            // tambahkan 'Rp.' pada saat ketik nominal di form kolom input
+            // gunakan fungsi formatRupiah() untuk mengubah nominal angka yang di ketik menjadi format angka
+            rupiah.value = formatRupiah(this.value);
+        });
+        /* Fungsi formatRupiah */
+        function formatRupiah(angka, prefix) {
+            var number_string = angka.replace(/[^,\d]/g, '').toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            // tambahkan titik jika yang di input sudah menjadi angka satuan ribuan
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix == undefined ? rupiah : (rupiah ? + rupiah : '');
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
+
+</body>
+
+</html>
